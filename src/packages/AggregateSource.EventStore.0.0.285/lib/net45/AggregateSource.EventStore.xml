@@ -1,0 +1,593 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AggregateSource.EventStore</name>
+    </assembly>
+    <members>
+        <member name="T:AggregateSource.EventStore.AsyncRepository`1">
+            <summary>
+            Represents an asynchronous, virtual collection of <typeparamref name="TAggregateRoot"/>.
+            </summary>
+            <typeparam name="TAggregateRoot">The type of the aggregate root in this collection.</typeparam>
+        </member>
+        <member name="M:AggregateSource.EventStore.AsyncRepository`1.#ctor(System.Func{`0},AggregateSource.ConcurrentUnitOfWork,EventStore.ClientAPI.IEventStoreConnection,AggregateSource.EventStore.EventReaderConfiguration)">
+            <summary>
+            Initializes a new instance of the <see cref="T:AggregateSource.EventStore.AsyncRepository`1"/> class.
+            </summary>
+            <param name="rootFactory">The aggregate root entity factory.</param>
+            <param name="unitOfWork">The unit of work to interact with.</param>
+            <param name="connection">The event store connection to use.</param>
+            <param name="configuration">The event store configuration to use.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the <paramref name="rootFactory"/> or <paramref name="unitOfWork"/> or <paramref name="connection"/> or <paramref name="configuration"/> is null.</exception>
+        </member>
+        <member name="M:AggregateSource.EventStore.AsyncRepository`1.GetAsync(System.String)">
+            <summary>
+            Gets the aggregate root entity associated with the specified aggregate identifier.
+            </summary>
+            <param name="identifier">The aggregate identifier.</param>
+            <returns>An instance of <typeparamref name="TAggregateRoot"/>.</returns>
+            <exception cref="T:AggregateSource.AggregateNotFoundException">Thrown when an aggregate is not found.</exception>
+        </member>
+        <member name="M:AggregateSource.EventStore.AsyncRepository`1.GetOptionalAsync(System.String)">
+            <summary>
+            Attempts to get the aggregate root entity associated with the aggregate identifier.
+            </summary>
+            <param name="identifier">The aggregate identifier.</param>
+            <returns>The found <typeparamref name="TAggregateRoot"/>, or empty if not found.</returns>
+        </member>
+        <member name="M:AggregateSource.EventStore.AsyncRepository`1.Add(System.String,`0)">
+            <summary>
+            Adds the aggregate root entity to this collection using the specified aggregate identifier.
+            </summary>
+            <param name="identifier">The aggregate identifier.</param>
+            <param name="root">The aggregate root entity.</param>
+        </member>
+        <member name="P:AggregateSource.EventStore.AsyncRepository`1.RootFactory">
+            <summary>
+            Gets the aggregate root entity factory.
+            </summary>
+            <value>
+            The aggregate root entity factory.
+            </value>
+        </member>
+        <member name="P:AggregateSource.EventStore.AsyncRepository`1.UnitOfWork">
+            <summary>
+            Gets the unit of work.
+            </summary>
+            <value>
+            The unit of work.
+            </value>
+        </member>
+        <member name="P:AggregateSource.EventStore.AsyncRepository`1.Connection">
+            <summary>
+            Gets the event store connection to use.
+            </summary>
+            <value>
+            The event store connection to use.
+            </value>
+        </member>
+        <member name="P:AggregateSource.EventStore.AsyncRepository`1.Configuration">
+            <summary>
+            Gets the event reader configuration.
+            </summary>
+            <value>
+            The event reader configuration.
+            </value>
+        </member>
+        <member name="T:AggregateSource.EventStore.EventReaderConfiguration">
+            <summary>
+            Represents configuration settings used during reading from the event store.
+            </summary>
+        </member>
+        <member name="M:AggregateSource.EventStore.EventReaderConfiguration.#ctor(AggregateSource.EventStore.SliceSize,AggregateSource.EventStore.IEventDeserializer,AggregateSource.EventStore.IStreamNameResolver,AggregateSource.EventStore.IStreamUserCredentialsResolver)">
+            <summary>
+            Initializes a new instance of the <see cref="T:AggregateSource.EventStore.EventReaderConfiguration"/> class.
+            </summary>
+            <param name="sliceSize">Size of the slice to read.</param>
+            <param name="deserializer">The event deserializer to use.</param>
+            <param name="streamNameResolver">The stream name resolver to use.</param>
+            <param name="streamUserCredentialsResolver">The stream user credentials resolver to use.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the <paramref name="deserializer"/> or <paramref name="streamNameResolver"/> is <c>null</c>.</exception>
+        </member>
+        <member name="P:AggregateSource.EventStore.EventReaderConfiguration.SliceSize">
+            <summary>
+            Gets the size of the slice to read.
+            </summary>
+            <value>
+            The size of the slice to read.
+            </value>
+        </member>
+        <member name="P:AggregateSource.EventStore.EventReaderConfiguration.Deserializer">
+            <summary>
+            Gets the event deserializer.
+            </summary>
+            <value>
+            The event deserializer.
+            </value>
+        </member>
+        <member name="P:AggregateSource.EventStore.EventReaderConfiguration.StreamNameResolver">
+            <summary>
+            Gets the stream name resolver.
+            </summary>
+            <value>The stream name resolver.</value>
+        </member>
+        <member name="P:AggregateSource.EventStore.EventReaderConfiguration.StreamUserCredentialsResolver">
+            <summary>
+            Gets the stream user credentials resolver.
+            </summary>
+            <value>The stream user credentials resolver.</value>
+        </member>
+        <member name="T:AggregateSource.EventStore.IEventDeserializer">
+            <summary>
+            Represent an event deserializer.
+            </summary>
+        </member>
+        <member name="M:AggregateSource.EventStore.IEventDeserializer.Deserialize(EventStore.ClientAPI.ResolvedEvent)">
+            <summary>
+            Deserializes a resolved event into zero, one or more events consumable by the aggregate root entity.
+            </summary>
+            <param name="resolvedEvent">The resolved event to deserialize.</param>
+            <returns>An enumeration of deserialized events.</returns>
+        </member>
+        <member name="T:AggregateSource.EventStore.IStreamNameResolver">
+            <summary>
+            Provides a way to resolve an identifier into a stream's name.
+            </summary>
+        </member>
+        <member name="M:AggregateSource.EventStore.IStreamNameResolver.Resolve(System.String)">
+            <summary>
+            Resolves the specified <paramref name="identifier"/> into a stream name.
+            </summary>
+            <param name="identifier">The identifier to resolve.</param>
+            <returns>The resolved stream name.</returns>
+        </member>
+        <member name="T:AggregateSource.EventStore.IStreamUserCredentialsResolver">
+            <summary>
+            Provides a way to resolve an identifier into the user credentials used to access the associated stream.
+            </summary>
+        </member>
+        <member name="M:AggregateSource.EventStore.IStreamUserCredentialsResolver.Resolve(System.String)">
+            <summary>
+            Resolves the specified <paramref name="identifier"/> into user credentials used to access the associated stream.
+            </summary>
+            <param name="identifier">The identifier.</param>
+            <returns>The associated <see cref="T:EventStore.ClientAPI.SystemData.UserCredentials"/>.</returns>
+        </member>
+        <member name="T:AggregateSource.EventStore.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:AggregateSource.EventStore.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:AggregateSource.EventStore.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:AggregateSource.EventStore.Properties.Resources.SliceSize_GreaterThanOne">
+            <summary>
+              Looks up a localized string similar to The value must be greater than or equal to 1..
+            </summary>
+        </member>
+        <member name="T:AggregateSource.EventStore.Repository`1">
+            <summary>
+            Represents a virtual collection of <typeparamref name="TAggregateRoot"/>.
+            </summary>
+            <typeparam name="TAggregateRoot">The type of the aggregate root in this collection.</typeparam>
+        </member>
+        <member name="M:AggregateSource.EventStore.Repository`1.#ctor(System.Func{`0},AggregateSource.UnitOfWork,EventStore.ClientAPI.IEventStoreConnection,AggregateSource.EventStore.EventReaderConfiguration)">
+            <summary>
+            Initializes a new instance of the <see cref="T:AggregateSource.EventStore.Repository`1"/> class.
+            </summary>
+            <param name="rootFactory">The aggregate root entity factory.</param>
+            <param name="unitOfWork">The unit of work to interact with.</param>
+            <param name="connection">The event store connection to use.</param>
+            <param name="configuration">The event reader configuration to use.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the <paramref name="rootFactory"/> or <paramref name="unitOfWork"/> or <paramref name="connection"/> or <paramref name="configuration"/> is null.</exception>
+        </member>
+        <member name="M:AggregateSource.EventStore.Repository`1.Get(System.String)">
+            <summary>
+            Gets the aggregate root entity associated with the specified aggregate identifier.
+            </summary>
+            <param name="identifier">The aggregate identifier.</param>
+            <returns>An instance of <typeparamref name="TAggregateRoot"/>.</returns>
+            <exception cref="T:AggregateSource.AggregateNotFoundException">Thrown when an aggregate is not found.</exception>
+        </member>
+        <member name="M:AggregateSource.EventStore.Repository`1.GetOptional(System.String)">
+            <summary>
+            Attempts to get the aggregate root entity associated with the aggregate identifier.
+            </summary>
+            <param name="identifier">The aggregate identifier.</param>
+            <returns>The found <typeparamref name="TAggregateRoot"/>, or empty if not found.</returns>
+        </member>
+        <member name="M:AggregateSource.EventStore.Repository`1.Add(System.String,`0)">
+            <summary>
+            Adds the aggregate root entity to this collection using the specified aggregate identifier.
+            </summary>
+            <param name="identifier">The aggregate identifier.</param>
+            <param name="root">The aggregate root entity.</param>
+        </member>
+        <member name="P:AggregateSource.EventStore.Repository`1.RootFactory">
+            <summary>
+            Gets the aggregate root entity factory.
+            </summary>
+            <value>
+            The aggregate root entity factory.
+            </value>
+        </member>
+        <member name="P:AggregateSource.EventStore.Repository`1.UnitOfWork">
+            <summary>
+            Gets the unit of work.
+            </summary>
+            <value>
+            The unit of work.
+            </value>
+        </member>
+        <member name="P:AggregateSource.EventStore.Repository`1.Connection">
+            <summary>
+            Gets the event store connection to use.
+            </summary>
+            <value>
+            The event store connection to use.
+            </value>
+        </member>
+        <member name="P:AggregateSource.EventStore.Repository`1.Configuration">
+            <summary>
+            Gets the event reader configuration.
+            </summary>
+            <value>
+            The event reader configuration.
+            </value>
+        </member>
+        <member name="T:AggregateSource.EventStore.Resolvers.FixedStreamUserCredentialsResolver">
+            <summary>
+            Stream user credentials resolver that can be used when all streams are accessed using the same user credentials.
+            </summary>
+        </member>
+        <member name="M:AggregateSource.EventStore.Resolvers.FixedStreamUserCredentialsResolver.#ctor(EventStore.ClientAPI.SystemData.UserCredentials)">
+            <summary>
+            Initializes a new instance of the <see cref="T:AggregateSource.EventStore.Resolvers.FixedStreamUserCredentialsResolver"/> class.
+            </summary>
+            <param name="fixedUserCredentials">The fixed user credentials.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the <paramref name="fixedUserCredentials"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:AggregateSource.EventStore.Resolvers.FixedStreamUserCredentialsResolver.Resolve(System.String)">
+            <summary>
+            Resolves the specified <paramref name="identifier"/> into user credentials used to access the associated stream.
+            </summary>
+            <param name="identifier">The identifier.</param>
+            <returns>
+            The associated <see cref="T:EventStore.ClientAPI.SystemData.UserCredentials"/>.
+            </returns>
+        </member>
+        <member name="T:AggregateSource.EventStore.Resolvers.NoStreamUserCredentialsResolver">
+            <summary>
+            Stream user credentials resolver that can be used when all streams are accessed without credentials.
+            </summary>
+        </member>
+        <member name="M:AggregateSource.EventStore.Resolvers.NoStreamUserCredentialsResolver.Resolve(System.String)">
+            <summary>
+            Resolves the specified <paramref name="identifier"/> into user credentials used to access the associated stream.
+            </summary>
+            <param name="identifier">The identifier.</param>
+            <returns>
+            The associated <see cref="T:EventStore.ClientAPI.SystemData.UserCredentials"/>.
+            </returns>
+            <exception cref="T:System.ArgumentNullException">identifier</exception>
+        </member>
+        <member name="T:AggregateSource.EventStore.Resolvers.PassThroughStreamNameResolver">
+            <summary>
+            Stream name resolver that can be used when the identifier is the stream name.
+            </summary>
+        </member>
+        <member name="M:AggregateSource.EventStore.Resolvers.PassThroughStreamNameResolver.Resolve(System.String)">
+            <summary>
+            Resolves the specified <paramref name="identifier"/> into a stream name.
+            </summary>
+            <param name="identifier">The identifier to resolve.</param>
+            <returns>
+            The resolved stream name.
+            </returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when the <paramref name="identifier"/> is <c>null</c>.</exception>
+        </member>
+        <member name="T:AggregateSource.EventStore.SliceSize">
+            <summary>
+            Represent the size of a slice to read from the event store.
+            </summary>
+        </member>
+        <member name="M:AggregateSource.EventStore.SliceSize.#ctor(System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:AggregateSource.EventStore.SliceSize"/> struct.
+            </summary>
+            <param name="value">The size of the slice to read from the event store.</param>
+            <exception cref="T:System.ArgumentOutOfRangeException">Throw when the value is less than 1.</exception>
+        </member>
+        <member name="M:AggregateSource.EventStore.SliceSize.op_Implicit(AggregateSource.EventStore.SliceSize)~System.Int32">
+            <summary>
+            Converts the specified size to an integer.
+            </summary>
+            <param name="size">The slice size.</param>
+            <returns>The <see cref="T:System.Int32"/> value of the slice to read.</returns>
+        </member>
+        <member name="T:AggregateSource.EventStore.Snapshots.AsyncSnapshotableRepository`1">
+            <summary>
+            Represents an asynchronous, virtual collection of <typeparamref name="TAggregateRoot"/>.
+            </summary>
+            <typeparam name="TAggregateRoot">The type of the aggregate root in this collection.</typeparam>
+        </member>
+        <member name="M:AggregateSource.EventStore.Snapshots.AsyncSnapshotableRepository`1.#ctor(System.Func{`0},AggregateSource.ConcurrentUnitOfWork,EventStore.ClientAPI.IEventStoreConnection,AggregateSource.EventStore.EventReaderConfiguration,AggregateSource.EventStore.Snapshots.IAsyncSnapshotReader)">
+            <summary>
+            Initializes a new instance of the <see cref="T:AggregateSource.EventStore.AsyncRepository`1"/> class.
+            </summary>
+            <param name="rootFactory">The aggregate root entity factory.</param>
+            <param name="unitOfWork">The unit of work to interact with.</param>
+            <param name="connection">The event store connection to use.</param>
+            <param name="configuration">The event store configuration to use.</param>
+            <param name="reader">The snapshot reader to use.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the <paramref name="rootFactory"/> or <paramref name="unitOfWork"/> or <paramref name="connection"/> or <paramref name="configuration"/> or <paramref name="reader"/> is null.</exception>
+        </member>
+        <member name="M:AggregateSource.EventStore.Snapshots.AsyncSnapshotableRepository`1.GetAsync(System.String)">
+            <summary>
+            Gets the aggregate root entity associated with the specified aggregate identifier.
+            </summary>
+            <param name="identifier">The aggregate identifier.</param>
+            <returns>An instance of <typeparamref name="TAggregateRoot"/>.</returns>
+            <exception cref="T:AggregateSource.AggregateNotFoundException">Thrown when an aggregate is not found.</exception>
+        </member>
+        <member name="M:AggregateSource.EventStore.Snapshots.AsyncSnapshotableRepository`1.GetOptionalAsync(System.String)">
+            <summary>
+            Attempts to get the aggregate root entity associated with the aggregate identifier.
+            </summary>
+            <param name="identifier">The aggregate identifier.</param>
+            <returns>The found <typeparamref name="TAggregateRoot"/>, or empty if not found.</returns>
+        </member>
+        <member name="M:AggregateSource.EventStore.Snapshots.AsyncSnapshotableRepository`1.Add(System.String,`0)">
+            <summary>
+            Adds the aggregate root entity to this collection using the specified aggregate identifier.
+            </summary>
+            <param name="identifier">The aggregate identifier.</param>
+            <param name="root">The aggregate root entity.</param>
+        </member>
+        <member name="T:AggregateSource.EventStore.Snapshots.AsyncSnapshotReader">
+            <summary>
+            Represents the default async behavior that reads a <see cref="T:AggregateSource.EventStore.Snapshots.Snapshot"/> from the underlying storage.
+            </summary>
+        </member>
+        <member name="T:AggregateSource.EventStore.Snapshots.IAsyncSnapshotReader">
+            <summary>
+            Represents the async behavior that reads a <see cref="T:AggregateSource.EventStore.Snapshots.Snapshot"/> from the underlying storage.
+            </summary>
+        </member>
+        <member name="M:AggregateSource.EventStore.Snapshots.IAsyncSnapshotReader.ReadOptionalAsync(System.String)">
+            <summary>
+            Reads a snapshot from the underlying storage if one is present.
+            </summary>
+            <param name="identifier">The aggregate identifier.</param>
+            <returns>A <see cref="T:AggregateSource.EventStore.Snapshots.Snapshot"/> if found, otherwise <c>empty</c>.</returns>
+        </member>
+        <member name="M:AggregateSource.EventStore.Snapshots.AsyncSnapshotReader.#ctor(EventStore.ClientAPI.IEventStoreConnection,AggregateSource.EventStore.Snapshots.SnapshotReaderConfiguration)">
+            <summary>
+            Initializes a new instance of the <see cref="T:AggregateSource.EventStore.Snapshots.AsyncSnapshotReader"/> class.
+            </summary>
+            <param name="connection">The event store connection to use.</param>
+            <param name="configuration">The configuration to use.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="connection"/> or <paramref name="configuration"/> are <c>null</c>.</exception>
+        </member>
+        <member name="M:AggregateSource.EventStore.Snapshots.AsyncSnapshotReader.ReadOptionalAsync(System.String)">
+            <summary>
+            Reads a snapshot from the underlying storage if one is present.
+            </summary>
+            <param name="identifier">The aggregate identifier.</param>
+            <returns>
+            A <see cref="T:AggregateSource.EventStore.Snapshots.Snapshot"/> if found, otherwise <c>empty</c>.
+            </returns>
+            <exception cref="T:System.ArgumentNullException">identifier</exception>
+        </member>
+        <member name="P:AggregateSource.EventStore.Snapshots.AsyncSnapshotReader.Connection">
+            <summary>
+            Gets the event store connection.
+            </summary>
+            <value>
+            The connection.
+            </value>
+        </member>
+        <member name="P:AggregateSource.EventStore.Snapshots.AsyncSnapshotReader.Configuration">
+            <summary>
+            Gets the configuration used to read.
+            </summary>
+            <value>
+            The configuration.
+            </value>
+        </member>
+        <member name="T:AggregateSource.EventStore.Snapshots.SnapshotableRepository`1">
+            <summary>
+            Represents a virtual collection of <typeparamref name="TAggregateRoot"/>.
+            </summary>
+            <typeparam name="TAggregateRoot">The type of the aggregate root in this collection.</typeparam>
+        </member>
+        <member name="M:AggregateSource.EventStore.Snapshots.SnapshotableRepository`1.#ctor(System.Func{`0},AggregateSource.UnitOfWork,EventStore.ClientAPI.IEventStoreConnection,AggregateSource.EventStore.EventReaderConfiguration,AggregateSource.EventStore.Snapshots.ISnapshotReader)">
+            <summary>
+            Initializes a new instance of the <see cref="T:AggregateSource.EventStore.Snapshots.SnapshotableRepository`1"/> class.
+            </summary>
+            <param name="rootFactory">The aggregate root entity factory.</param>
+            <param name="unitOfWork">The unit of work to interact with.</param>
+            <param name="connection">The event store connection to use.</param>
+            <param name="configuration">The event store configuration to use.</param>
+            <param name="reader">The snapshot reader to use.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the <paramref name="rootFactory"/> or <paramref name="unitOfWork"/> or <paramref name="connection"/> or <paramref name="configuration"/> is null.</exception>
+        </member>
+        <member name="M:AggregateSource.EventStore.Snapshots.SnapshotableRepository`1.Get(System.String)">
+            <summary>
+            Gets the aggregate root entity associated with the specified aggregate identifier.
+            </summary>
+            <param name="identifier">The aggregate identifier.</param>
+            <returns>An instance of <typeparamref name="TAggregateRoot"/>.</returns>
+            <exception cref="T:AggregateSource.AggregateNotFoundException">Thrown when an aggregate is not found.</exception>
+        </member>
+        <member name="M:AggregateSource.EventStore.Snapshots.SnapshotableRepository`1.GetOptional(System.String)">
+            <summary>
+            Attempts to get the aggregate root entity associated with the aggregate identifier.
+            </summary>
+            <param name="identifier">The aggregate identifier.</param>
+            <returns>The found <typeparamref name="TAggregateRoot"/>, or empty if not found.</returns>
+        </member>
+        <member name="M:AggregateSource.EventStore.Snapshots.SnapshotableRepository`1.Add(System.String,`0)">
+            <summary>
+            Adds the aggregate root entity to this collection using the specified aggregate identifier.
+            </summary>
+            <param name="identifier">The aggregate identifier.</param>
+            <param name="root">The aggregate root entity.</param>
+        </member>
+        <member name="T:AggregateSource.EventStore.Snapshots.ISnapshotDeserializer">
+            <summary>
+            Represents a snapshot deserializer.
+            </summary>
+        </member>
+        <member name="M:AggregateSource.EventStore.Snapshots.ISnapshotDeserializer.Deserialize(EventStore.ClientAPI.ResolvedEvent)">
+            <summary>
+            Deserializes a resolved event into an snapshot consumable by the aggregate root entity.
+            </summary>
+            <param name="resolvedEvent">The resolved event to deserialize.</param>
+            <returns>The deserialized snapshot.</returns>
+        </member>
+        <member name="T:AggregateSource.EventStore.Snapshots.ISnapshotReader">
+            <summary>
+            Represents the behavior that reads a <see cref="T:AggregateSource.EventStore.Snapshots.Snapshot"/> from the underlying storage.
+            </summary>
+        </member>
+        <member name="M:AggregateSource.EventStore.Snapshots.ISnapshotReader.ReadOptional(System.String)">
+            <summary>
+            Reads a snapshot from the underlying storage if one is present.
+            </summary>
+            <param name="identifier">The aggregate identifier.</param>
+            <returns>A <see cref="T:AggregateSource.EventStore.Snapshots.Snapshot"/> if found, otherwise <c>empty</c>.</returns>
+        </member>
+        <member name="T:AggregateSource.EventStore.Snapshots.Snapshot">
+            <summary>
+            Represents a snapshot of an aggregate at a particular version.
+            </summary>
+        </member>
+        <member name="M:AggregateSource.EventStore.Snapshots.Snapshot.#ctor(System.Int32,System.Object)">
+            <summary>
+            Initializes a new instance of the <see cref="T:AggregateSource.EventStore.Snapshots.Snapshot"/> class.
+            </summary>
+            <param name="version">The version at which the snapshot was taken.</param>
+            <param name="state">The state object when the snapshot was taken.</param>
+        </member>
+        <member name="M:AggregateSource.EventStore.Snapshots.Snapshot.Equals(System.Object)">
+            <summary>
+            Determines whether the specified <see cref="T:System.Object"/> is equal to this instance.
+            </summary>
+            <param name="obj">The <see cref="T:System.Object"/> to compare with this instance.</param>
+            <returns>
+              <c>true</c> if the specified <see cref="T:System.Object"/> is equal to this instance; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:AggregateSource.EventStore.Snapshots.Snapshot.GetHashCode">
+            <summary>
+            Returns a hash code for this instance.
+            </summary>
+            <returns>
+            A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+            </returns>
+        </member>
+        <member name="P:AggregateSource.EventStore.Snapshots.Snapshot.Version">
+            <summary>
+            Gets the version at which the snapshot was taken.
+            </summary>
+            <value>
+            The version.
+            </value>
+        </member>
+        <member name="P:AggregateSource.EventStore.Snapshots.Snapshot.State">
+            <summary>
+            Gets the state object when the snapshot was taken.
+            </summary>
+            <value>
+            The state object.
+            </value>
+        </member>
+        <member name="T:AggregateSource.EventStore.Snapshots.SnapshotReader">
+            <summary>
+            Represents the default behavior that reads a <see cref="T:AggregateSource.EventStore.Snapshots.Snapshot"/> from the underlying storage.
+            </summary>
+        </member>
+        <member name="M:AggregateSource.EventStore.Snapshots.SnapshotReader.#ctor(EventStore.ClientAPI.IEventStoreConnection,AggregateSource.EventStore.Snapshots.SnapshotReaderConfiguration)">
+            <summary>
+            Initializes a new instance of the <see cref="T:AggregateSource.EventStore.Snapshots.SnapshotReader"/> class.
+            </summary>
+            <param name="connection">The event store connection to use.</param>
+            <param name="configuration">The configuration to use.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="connection"/> or <paramref name="configuration"/> are <c>null</c>.</exception>
+        </member>
+        <member name="M:AggregateSource.EventStore.Snapshots.SnapshotReader.ReadOptional(System.String)">
+            <summary>
+            Reads a snapshot from the underlying storage if one is present.
+            </summary>
+            <param name="identifier">The aggregate identifier.</param>
+            <returns>
+            A <see cref="T:AggregateSource.EventStore.Snapshots.Snapshot"/> if found, otherwise <c>empty</c>.
+            </returns>
+            <exception cref="T:System.ArgumentNullException">identifier</exception>
+        </member>
+        <member name="P:AggregateSource.EventStore.Snapshots.SnapshotReader.Connection">
+            <summary>
+            Gets the event store connection.
+            </summary>
+            <value>
+            The connection.
+            </value>
+        </member>
+        <member name="P:AggregateSource.EventStore.Snapshots.SnapshotReader.Configuration">
+            <summary>
+            Gets the configuration used to read.
+            </summary>
+            <value>
+            The configuration.
+            </value>
+        </member>
+        <member name="T:AggregateSource.EventStore.Snapshots.SnapshotReaderConfiguration">
+            <summary>
+            Represents configuration settings used during reading from the snapshot store.
+            </summary>
+        </member>
+        <member name="M:AggregateSource.EventStore.Snapshots.SnapshotReaderConfiguration.#ctor(AggregateSource.EventStore.Snapshots.ISnapshotDeserializer,AggregateSource.EventStore.IStreamNameResolver,AggregateSource.EventStore.IStreamUserCredentialsResolver)">
+            <summary>
+            Initializes a new instance of the <see cref="T:AggregateSource.EventStore.Snapshots.SnapshotReaderConfiguration"/> class.
+            </summary>
+            <param name="deserializer">The snapshot deserializer.</param>
+            <param name="streamNameResolver">The snapshot stream name resolver.</param>
+            <param name="streamUserCredentialsResolver">The snapshot stream user credentials resolver.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="deserializer"/> or <paramref name="streamNameResolver"/> or <paramref name="streamUserCredentialsResolver"/> is <c>null</c>.</exception>
+        </member>
+        <member name="P:AggregateSource.EventStore.Snapshots.SnapshotReaderConfiguration.Deserializer">
+            <summary>
+            Gets the snapshot deserializer.
+            </summary>
+            <value>
+            The deserializer.
+            </value>
+        </member>
+        <member name="P:AggregateSource.EventStore.Snapshots.SnapshotReaderConfiguration.StreamNameResolver">
+            <summary>
+            Gets the snapshot stream name resolver.
+            </summary>
+            <value>
+            The resolver.
+            </value>
+        </member>
+        <member name="P:AggregateSource.EventStore.Snapshots.SnapshotReaderConfiguration.StreamUserCredentialsResolver">
+            <summary>
+            Gets the snapshot stream user credentials resolver.
+            </summary>
+            <value>
+            The resolver.
+            </value>
+        </member>
+    </members>
+</doc>

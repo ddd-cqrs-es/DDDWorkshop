@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>AggregateSource</id>
+    <version>0.0.285</version>
+    <title>AggregateSource</title>
+    <authors>Yves Reynhout</authors>
+    <owners>Yves Reynhout</owners>
+    <licenseUrl>https://raw.github.com/yreynhout/AggregateSource/master/LICENSE.txt</licenseUrl>
+    <projectUrl>https://github.com/yreynhout/AggregateSource</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>AggregateSource provides lightweight infrastructure for building an eventsourced, aggregate based domain model.</description>
+    <releaseNotes>Warning! The API is still in flux. NET40 and NET45 support.</releaseNotes>
+    <copyright>Copyright 2013, BitTacklr. All rights reserved.</copyright>
+    <tags>eventsourcing DDDesign</tags>
+  </metadata>
+</package>

@@ -1,0 +1,16 @@
+C:\Dev\DDDWorkshop\DDDWorkshop\DDDWorkshop\bin\Debug\DDDWorkshop.exe.config
+C:\Dev\DDDWorkshop\DDDWorkshop\DDDWorkshop\obj\Debug\DDDWorkshop.csprojResolveAssemblyReference.cache
+C:\Dev\DDDWorkshop\DDDWorkshop\DDDWorkshop\bin\Debug\DDDWorkshop.exe
+C:\Dev\DDDWorkshop\DDDWorkshop\DDDWorkshop\bin\Debug\DDDWorkshop.pdb
+C:\Dev\DDDWorkshop\DDDWorkshop\DDDWorkshop\bin\Debug\AggregateSource.dll
+C:\Dev\DDDWorkshop\DDDWorkshop\DDDWorkshop\bin\Debug\AggregateSource.EventStore.dll
+C:\Dev\DDDWorkshop\DDDWorkshop\DDDWorkshop\bin\Debug\DDDWorkshop.Model.dll
+C:\Dev\DDDWorkshop\DDDWorkshop\DDDWorkshop\bin\Debug\EventStore.ClientAPI.dll
+C:\Dev\DDDWorkshop\DDDWorkshop\DDDWorkshop\bin\Debug\Newtonsoft.Json.dll
+C:\Dev\DDDWorkshop\DDDWorkshop\DDDWorkshop\bin\Debug\DDDWorkshop.Model.pdb
+C:\Dev\DDDWorkshop\DDDWorkshop\DDDWorkshop\bin\Debug\AggregateSource.xml
+C:\Dev\DDDWorkshop\DDDWorkshop\DDDWorkshop\bin\Debug\AggregateSource.EventStore.xml
+C:\Dev\DDDWorkshop\DDDWorkshop\DDDWorkshop\bin\Debug\EventStore.ClientAPI.xml
+C:\Dev\DDDWorkshop\DDDWorkshop\DDDWorkshop\bin\Debug\Newtonsoft.Json.xml
+C:\Dev\DDDWorkshop\DDDWorkshop\DDDWorkshop\obj\Debug\DDDWorkshop.exe
+C:\Dev\DDDWorkshop\DDDWorkshop\DDDWorkshop\obj\Debug\DDDWorkshop.pdb

@@ -1,0 +1,696 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AggregateSource</name>
+    </assembly>
+    <members>
+        <member name="T:AggregateSource.Aggregate">
+            <summary>
+            Class for tracking aggregate meta data and its <see cref="T:AggregateSource.IAggregateRootEntity"/>.
+            </summary>
+        </member>
+        <member name="M:AggregateSource.Aggregate.#ctor(System.String,System.Int32,AggregateSource.IAggregateRootEntity)">
+            <summary>
+            Initializes a new instance of the <see cref="T:AggregateSource.Aggregate"/> class.
+            </summary>
+            <param name="identifier">The aggregate identifier.</param>
+            <param name="expectedVersion">The expected aggregate version.</param>
+            <param name="root">The aggregate root entity.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the <paramref name="identifier"/> is null.</exception>
+            <exception cref="T:System.ArgumentNullException">Thrown when the <paramref name="root"/> is null.</exception>
+        </member>
+        <member name="M:AggregateSource.Aggregate.ToBuilder">
+            <summary>
+            Creates a mutable builder with the same contents as this instance.
+            </summary>
+            <returns>An <see cref="T:AggregateSource.AggregateBuilder"/>.</returns>
+        </member>
+        <member name="P:AggregateSource.Aggregate.Identifier">
+            <summary>
+            Gets the aggregate identifier.
+            </summary>
+            <value>
+            The aggregate identifier.
+            </value>
+        </member>
+        <member name="P:AggregateSource.Aggregate.ExpectedVersion">
+            <summary>
+            Gets the aggregate version.
+            </summary>
+        </member>
+        <member name="P:AggregateSource.Aggregate.Root">
+            <summary>
+            Gets the aggregate root entity.
+            </summary>
+            <value>
+            The aggregate root entity.
+            </value>
+        </member>
+        <member name="T:AggregateSource.AggregateBuilder">
+            <summary>
+            Mutable class that builds up an <see cref="T:AggregateSource.Aggregate"/>.
+            </summary>
+        </member>
+        <member name="M:AggregateSource.AggregateBuilder.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:AggregateSource.AggregateBuilder"/> class.
+            </summary>
+        </member>
+        <member name="M:AggregateSource.AggregateBuilder.#ctor(AggregateSource.Aggregate)">
+            <summary>
+            Initializes a new instance of the <see cref="T:AggregateSource.AggregateBuilder"/> class.
+            </summary>
+            <param name="instance">The aggregate instance to copy data from.</param>
+        </member>
+        <member name="M:AggregateSource.AggregateBuilder.IdentifiedBy(System.String)">
+            <summary>
+            Captures the identity of the aggregate.
+            </summary>
+            <param name="value">The identifier value.</param>
+            <returns>An <see cref="T:AggregateSource.AggregateBuilder"/> instance.</returns>
+        </member>
+        <member name="M:AggregateSource.AggregateBuilder.ExpectVersion(System.Int32)">
+            <summary>
+            Captures the expected version of the aggregate.
+            </summary>
+            <param name="value">The expected version value</param>
+            <returns>An <see cref="T:AggregateSource.AggregateBuilder"/> instance.</returns>
+        </member>
+        <member name="M:AggregateSource.AggregateBuilder.WithRoot(AggregateSource.IAggregateRootEntity)">
+            <summary>
+            Captures the aggregate root entity of the aggregate.
+            </summary>
+            <param name="value">The aggregate root entity value.</param>
+            <returns>An <see cref="T:AggregateSource.AggregateBuilder"/> instance.</returns>
+        </member>
+        <member name="M:AggregateSource.AggregateBuilder.Build">
+            <summary>
+            Builds the immutable <see cref="T:AggregateSource.Aggregate"/> based on captured information.
+            </summary>
+            <returns>An <see cref="T:AggregateSource.Aggregate"/>.</returns>
+        </member>
+        <member name="P:AggregateSource.AggregateBuilder.Identifier">
+            <summary>
+            Gets the aggregate identifier.
+            </summary>
+            <value>
+            The aggregate identifier.
+            </value>
+        </member>
+        <member name="P:AggregateSource.AggregateBuilder.ExpectedVersion">
+            <summary>
+            Gets the aggregate version.
+            </summary>
+        </member>
+        <member name="P:AggregateSource.AggregateBuilder.Root">
+            <summary>
+            Gets the aggregate root entity.
+            </summary>
+            <value>
+            The aggregate root entity.
+            </value>
+        </member>
+        <member name="T:AggregateSource.AggregateNotFoundException">
+            <summary>
+            Exception that tells callers an aggregate was not found.
+            </summary>
+        </member>
+        <member name="T:AggregateSource.AggregateSourceException">
+            <summary>
+            Marker exception for this library from which all its exceptions derive.
+            </summary>
+        </member>
+        <member name="M:AggregateSource.AggregateSourceException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:AggregateSource.AggregateSourceException"/> class.
+            </summary>
+        </member>
+        <member name="M:AggregateSource.AggregateSourceException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:AggregateSource.AggregateSourceException"/> class.
+            </summary>
+            <param name="message">The message that describes the error.</param>
+        </member>
+        <member name="M:AggregateSource.AggregateSourceException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:AggregateSource.AggregateSourceException"/> class.
+            </summary>
+            <param name="message">The error message that explains the reason for the exception.</param>
+            <param name="innerException">The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) if no inner exception is specified.</param>
+        </member>
+        <member name="M:AggregateSource.AggregateSourceException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:AggregateSource.AggregateSourceException"/> class.
+            </summary>
+            <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+            <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext"/> that contains contextual information about the source or destination.</param>
+        </member>
+        <member name="M:AggregateSource.AggregateNotFoundException.#ctor(System.String,System.Type)">
+            <summary>
+            Initializes a new instance of the <see cref="T:AggregateSource.AggregateNotFoundException"/> class.
+            </summary>
+            <param name="identifier">The aggregate identifier.</param>
+            <param name="clrType">ClrType of the aggregate root entity.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the <paramref name="clrType"/> is null.</exception>
+        </member>
+        <member name="M:AggregateSource.AggregateNotFoundException.#ctor(System.String,System.Type,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:AggregateSource.AggregateNotFoundException"/> class.
+            </summary>
+            <param name="identifier">The aggregate identifier.</param>
+            <param name="clrType">ClrType of the aggregate root entity.</param>
+            <param name="message">The message.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the <paramref name="clrType"/> is null.</exception>
+        </member>
+        <member name="M:AggregateSource.AggregateNotFoundException.#ctor(System.String,System.Type,System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:AggregateSource.AggregateNotFoundException"/> class.
+            </summary>
+            <param name="identifier">The aggregate identifier.</param>
+            <param name="clrType">ClrType of the aggregate root entity.</param>
+            <param name="message">The message.</param>
+            <param name="innerException">The inner exception.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the <paramref name="clrType"/> is null.</exception>
+        </member>
+        <member name="M:AggregateSource.AggregateNotFoundException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:AggregateSource.AggregateNotFoundException"/> class.
+            </summary>
+            <param name="info">The info.</param>
+            <param name="context">The context.</param>
+        </member>
+        <member name="M:AggregateSource.AggregateNotFoundException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            When overridden in a derived class, sets the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> with information about the exception.
+            </summary>
+            <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> that holds the serialized object data about the exception being thrown.</param>
+            <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext" /> that contains contextual information about the source or destination.</param>
+            <PermissionSet>
+              <IPermission class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Read="*AllFiles*" PathDiscovery="*AllFiles*" />
+              <IPermission class="System.Security.Permissions.SecurityPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Flags="SerializationFormatter" />
+              </PermissionSet>
+        </member>
+        <member name="P:AggregateSource.AggregateNotFoundException.Identifier">
+            <summary>
+            Gets the aggregate id.
+            </summary>
+            <value>
+            The aggregate id.
+            </value>
+        </member>
+        <member name="P:AggregateSource.AggregateNotFoundException.ClrType">
+            <summary>
+            Gets the <see cref="T:System.Type">ClrType</see> of the aggregate root entity.
+            </summary>
+            <value>
+            The ClrType of the aggregate root entity, or <c>null</c> if type not found.
+            </value>
+        </member>
+        <member name="T:AggregateSource.ConcurrentUnitOfWork">
+            <summary>
+            Tracks changes of attached aggregates.
+            </summary>
+        </member>
+        <member name="M:AggregateSource.ConcurrentUnitOfWork.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:AggregateSource.ConcurrentUnitOfWork"/> class.
+            </summary>
+        </member>
+        <member name="M:AggregateSource.ConcurrentUnitOfWork.Attach(AggregateSource.Aggregate)">
+            <summary>
+            Attaches the specified aggregate.
+            </summary>
+            <param name="aggregate">The aggregate.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the <paramref name="aggregate"/> is null.</exception>
+        </member>
+        <member name="M:AggregateSource.ConcurrentUnitOfWork.TryGet(System.String,AggregateSource.Aggregate@)">
+            <summary>
+            Attempts to get the <see cref="T:AggregateSource.Aggregate"/> using the specified aggregate identifier.
+            </summary>
+            <param name="identifier">The aggregate identifier.</param>
+            <param name="aggregate">The aggregate if found, otherwise <c>null</c>.</param>
+            <returns><c>true</c> if the aggregate was found, otherwise <c>false</c>.</returns>
+        </member>
+        <member name="M:AggregateSource.ConcurrentUnitOfWork.HasChanges">
+            <summary>
+            Determines whether this instance has aggregates with state changes.
+            </summary>
+            <returns>
+              <c>true</c> if this instance has aggregates with state changes; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:AggregateSource.ConcurrentUnitOfWork.GetChanges">
+            <summary>
+            Gets the aggregates with state changes.
+            </summary>
+            <returns>An enumeration of <see cref="T:AggregateSource.Aggregate"/>.</returns>
+        </member>
+        <member name="T:AggregateSource.EventRecorder">
+            <summary>
+            Records events applied to an aggregate's root entity or entity.
+            </summary>
+        </member>
+        <member name="M:AggregateSource.EventRecorder.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:AggregateSource.EventRecorder"/> class.
+            </summary>
+        </member>
+        <member name="M:AggregateSource.EventRecorder.Record(System.Object)">
+            <summary>
+            Records that the specified event happened.
+            </summary>
+            <param name="event">The event to record.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the specified <paramref name="event"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:AggregateSource.EventRecorder.Reset">
+            <summary>
+            Resets this instance to its initial state.
+            </summary>
+        </member>
+        <member name="M:AggregateSource.EventRecorder.GetEnumerator">
+            <summary>
+            Gets an enumeration of recorded events.
+            </summary>
+            <returns>The recorded event enumerator.</returns>
+        </member>
+        <member name="M:AggregateSource.EventRecorder.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+            Returns an enumerator that iterates through a collection.
+            </summary>
+            <returns>
+            An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.
+            </returns>
+        </member>
+        <member name="T:AggregateSource.IAggregateChangeTracker">
+            <summary>
+            Tracks changes that happen to an aggregate
+            </summary>
+        </member>
+        <member name="M:AggregateSource.IAggregateChangeTracker.HasChanges">
+            <summary>
+            Determines whether this instance has state changes.
+            </summary>
+            <returns>
+              <c>true</c> if this instance has state changes; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:AggregateSource.IAggregateChangeTracker.GetChanges">
+            <summary>
+            Gets the state changes applied to this instance.
+            </summary>
+            <returns>A list of recorded state changes.</returns>
+        </member>
+        <member name="M:AggregateSource.IAggregateChangeTracker.ClearChanges">
+            <summary>
+            Clears the state changes.
+            </summary>
+        </member>
+        <member name="T:AggregateSource.IAggregateInitializer">
+            <summary>
+            Initializes an aggregate.
+            </summary>
+        </member>
+        <member name="M:AggregateSource.IAggregateInitializer.Initialize(System.Collections.Generic.IEnumerable{System.Object})">
+            <summary>
+            Initializes this instance using the specified events.
+            </summary>
+            <param name="events">The events to initialize with.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the <paramref name="events"/> are null.</exception>
+        </member>
+        <member name="T:AggregateSource.IAggregateRootEntity">
+            <summary>
+            Aggregate root entity marker interface.
+            </summary>
+        </member>
+        <member name="T:AggregateSource.IAsyncRepository`1">
+            <summary>
+            Represents an asynchronous, virtual collection of <typeparamref name="TAggregateRoot"/>.
+            </summary>
+            <typeparam name="TAggregateRoot">The type of the aggregate root in this collection.</typeparam>
+        </member>
+        <member name="M:AggregateSource.IAsyncRepository`1.GetAsync(System.String)">
+            <summary>
+            Gets the aggregate root entity associated with the specified aggregate identifier.
+            </summary>
+            <param name="identifier">The aggregate identifier.</param>
+            <returns>An instance of <typeparamref name="TAggregateRoot"/>.</returns>
+            <exception cref="T:AggregateSource.AggregateNotFoundException">Thrown when an aggregate is not found.</exception>
+        </member>
+        <member name="M:AggregateSource.IAsyncRepository`1.GetOptionalAsync(System.String)">
+            <summary>
+            Attempts to get the aggregate root entity associated with the aggregate identifier.
+            </summary>
+            <param name="identifier">The aggregate identifier.</param>
+            <returns>The found <typeparamref name="TAggregateRoot"/>, or empty if not found.</returns>
+        </member>
+        <member name="M:AggregateSource.IAsyncRepository`1.Add(System.String,`0)">
+            <summary>
+            Adds the aggregate root entity to this collection using the specified aggregate identifier.
+            </summary>
+            <param name="identifier">The aggregate identifier.</param>
+            <param name="root">The aggregate root entity.</param>
+        </member>
+        <member name="T:AggregateSource.IConfigureInstanceEventRouter">
+            <summary>
+            Configures an instance event router with state handlers events can be routed to.
+            </summary>
+        </member>
+        <member name="T:AggregateSource.IInstanceEventRouter">
+            <summary>
+            Routes an event to a configured state handler.
+            </summary>
+        </member>
+        <member name="M:AggregateSource.IInstanceEventRouter.Route(System.Object)">
+            <summary>
+            Routes the specified <paramref name="event"/> to a configured state handler, if any.
+            </summary>
+            <param name="event">The event to route.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the <paramref name="event"/> is null.</exception>
+        </member>
+        <member name="M:AggregateSource.IConfigureInstanceEventRouter.ConfigureRoute(System.Type,System.Action{System.Object})">
+            <summary>
+            Adds a route for the specified event type to the specified state handler.
+            </summary>
+            <param name="event">The event type the route is for.</param>
+            <param name="handler">The state handler that should be invoked when an event of the specified type is routed.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="event"/> or <paramref name="handler"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:AggregateSource.IConfigureInstanceEventRouter.ConfigureRoute``1(System.Action{``0})">
+            <summary>
+            Adds a route for the specified event type to the specified state handler.
+            </summary>    
+            <typeparam name="TEvent">The event type the route is for.</typeparam>
+            <param name="handler">The state handler that should be invoked when an event of the specified type is routed.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="handler"/> is <c>null</c>.</exception>
+        </member>
+        <member name="T:AggregateSource.IConfigureStaticEventRouter">
+            <summary>
+            Configures a static event router with state handlers events can be routed to.
+            </summary>
+        </member>
+        <member name="T:AggregateSource.IStaticEventRouter">
+            <summary>
+            Routes an event to a configured state handler.
+            </summary>
+        </member>
+        <member name="M:AggregateSource.IStaticEventRouter.Route(System.Object,System.Object)">
+            <summary>
+            Routes the specified <paramref name="event"/> to a configured state handler, if any, on the specified <paramref name="instance"/>.
+            </summary>
+            <param name="instance">The instance to route to.</param>
+            <param name="event">The event to route.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the <paramref name="instance"/> or <paramref name="event"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:AggregateSource.IConfigureStaticEventRouter.ConfigureRoute``2(System.Action{``0,``1})">
+            <summary>
+            Adds a route for the specified event type to the specified state handler.
+            </summary>
+            <typeparam name="TInstance">The instance type this route is for.</typeparam>
+            <typeparam name="TEvent">The event type this route is for.</typeparam>
+            <param name="handler">The state handler that should be invoked when an event of the specified type is routed to an instance of the specified type.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="handler"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:AggregateSource.IConfigureStaticEventRouter.ConfigureRoute(System.Type,System.Type,System.Action{System.Object,System.Object})">
+            <summary>
+            Adds a route for the specified event type to the specified state handler.
+            </summary>
+            <param name="instance">The instance type the route is for.</param>
+            <param name="event">The event type the route is for.</param>
+            <param name="handler">The state handler that should be invoked when an event of the specified type is routed.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="instance"/> or <paramref name="event"/> or <paramref name="handler"/> is <c>null</c>.</exception>
+        </member>
+        <member name="T:AggregateSource.InstanceEventRouter">
+            <summary>
+            Routes an event to a configured state handler.
+            </summary>
+        </member>
+        <member name="M:AggregateSource.InstanceEventRouter.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:AggregateSource.InstanceEventRouter"/> class.
+            </summary>
+        </member>
+        <member name="M:AggregateSource.InstanceEventRouter.ConfigureRoute(System.Type,System.Action{System.Object})">
+            <summary>
+            Adds a route for the specified event type to the specified state handler.
+            </summary>
+            <param name="event">The event type the route is for.</param>
+            <param name="handler">The state handler that should be invoked when an event of the specified type is routed.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="event"/> or <paramref name="handler"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:AggregateSource.InstanceEventRouter.ConfigureRoute``1(System.Action{``0})">
+            <summary>
+            Adds a route for the specified event type to the specified state handler.
+            </summary>    
+            <typeparam name="TEvent">The event type the route is for.</typeparam>
+            <param name="handler">The state handler that should be invoked when an event of the specified type is routed.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="handler"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:AggregateSource.InstanceEventRouter.Route(System.Object)">
+            <summary>
+            Routes the specified <paramref name="event"/> to a configured state handler, if any.
+            </summary>
+            <param name="event">The event to route.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the <paramref name="event"/> is null.</exception>
+        </member>
+        <member name="T:AggregateSource.IRepository`1">
+            <summary>
+            Represents a virtual collection of <typeparamref name="TAggregateRoot"/>.
+            </summary>
+            <typeparam name="TAggregateRoot">The type of the aggregate root in this collection.</typeparam>
+        </member>
+        <member name="M:AggregateSource.IRepository`1.Get(System.String)">
+            <summary>
+            Gets the aggregate root entity associated with the specified aggregate identifier.
+            </summary>
+            <param name="identifier">The aggregate identifier.</param>
+            <returns>An instance of <typeparamref name="TAggregateRoot"/>.</returns>
+            <exception cref="T:AggregateSource.AggregateNotFoundException">Thrown when an aggregate is not found.</exception>
+        </member>
+        <member name="M:AggregateSource.IRepository`1.GetOptional(System.String)">
+            <summary>
+            Attempts to get the aggregate root entity associated with the aggregate identifier.
+            </summary>
+            <param name="identifier">The aggregate identifier.</param>
+            <returns>The found <typeparamref name="TAggregateRoot"/>, or empty if not found.</returns>
+        </member>
+        <member name="M:AggregateSource.IRepository`1.Add(System.String,`0)">
+            <summary>
+            Adds the aggregate root entity to this collection using the specified aggregate identifier.
+            </summary>
+            <param name="identifier">The aggregate identifier.</param>
+            <param name="root">The aggregate root entity.</param>
+        </member>
+        <member name="T:AggregateSource.ISnapshotable">
+            <summary>
+            Represents the snapshotting operations on an aggregate root entity.
+            </summary>
+        </member>
+        <member name="M:AggregateSource.ISnapshotable.RestoreSnapshot(System.Object)">
+            <summary>
+            Restores a snapshot using the specified <paramref name="state"/> object.
+            </summary>
+            <param name="state">The state object to restore the snapshot from.</param>
+        </member>
+        <member name="M:AggregateSource.ISnapshotable.TakeSnapshot">
+            <summary>
+            Takes a snapshot of the aggregate root entity.
+            </summary>
+            <returns>The state object that represents the snapshot.</returns>
+        </member>
+        <member name="T:AggregateSource.Optional`1">
+            <summary>
+            Represents an optional value.
+            </summary>
+            <typeparam name="T">The type of the optional value.</typeparam>
+        </member>
+        <member name="F:AggregateSource.Optional`1.Empty">
+            <summary>
+            The empty instance.
+            </summary>
+        </member>
+        <member name="M:AggregateSource.Optional`1.#ctor(`0)">
+            <summary>
+            Initializes a new <see cref="T:AggregateSource.Optional`1"/> instance.
+            </summary>
+            <param name="value">The value to initialize with.</param>
+        </member>
+        <member name="M:AggregateSource.Optional`1.GetEnumerator">
+            <summary>
+            Gets the enumerator.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:AggregateSource.Optional`1.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+            Returns an enumerator that iterates through a collection.
+            </summary>
+            <returns>
+            An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.
+            </returns>
+        </member>
+        <member name="M:AggregateSource.Optional`1.Equals(System.Object)">
+            <summary>
+            Determines whether the specified <see cref="T:System.Object"/> is equal to this instance.
+            </summary>
+            <param name="obj">The <see cref="T:System.Object"/> to compare with this instance.</param>
+            <returns>
+              <c>true</c> if the specified <see cref="T:System.Object"/> is equal to this instance; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:AggregateSource.Optional`1.Equals(AggregateSource.Optional{`0})">
+            <summary>
+            Determines whether the specified <see cref="T:AggregateSource.Optional`1"/> is equal to this instance.
+            </summary>
+            <param name="other">The <see cref="T:AggregateSource.Optional`1"/> to compare with this instance.</param>
+            <returns>
+              <c>true</c> if the specified <see cref="T:AggregateSource.Optional`1"/> is equal to this instance; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:AggregateSource.Optional`1.op_Equality(AggregateSource.Optional{`0},AggregateSource.Optional{`0})">
+            <summary>
+            Determines whether <see cref="T:AggregateSource.Optional`1">instance 1</see> is equal to <see cref="T:AggregateSource.Optional`1">instance 2</see>.
+            </summary>
+            <param name="instance1">The first instance.</param>
+            <param name="instance2">The second instance.</param>
+            <returns><c>true</c> if <see cref="T:AggregateSource.Optional`1">instance 1</see> is equal to <see cref="T:AggregateSource.Optional`1">instance 2</see>; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:AggregateSource.Optional`1.op_Inequality(AggregateSource.Optional{`0},AggregateSource.Optional{`0})">
+            <summary>
+            Determines whether <see cref="T:AggregateSource.Optional`1">instance 1</see> is not equal to <see cref="T:AggregateSource.Optional`1">instance 2</see>.
+            </summary>
+            <param name="instance1">The first instance.</param>
+            <param name="instance2">The second instance.</param>
+            <returns><c>true</c> if <see cref="T:AggregateSource.Optional`1">instance 1</see> is not equal to <see cref="T:AggregateSource.Optional`1">instance 2</see>; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:AggregateSource.Optional`1.GetHashCode">
+            <summary>
+            Returns a hash code for this instance.
+            </summary>
+            <returns>
+            A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+            </returns>
+        </member>
+        <member name="P:AggregateSource.Optional`1.HasValue">
+            <summary>
+            Gets an indication if this instance has a value.
+            </summary>
+        </member>
+        <member name="P:AggregateSource.Optional`1.Value">
+            <summary>
+            Gets the value associated with this instance.
+            </summary>
+            <exception cref="T:System.InvalidOperationException">Thrown when this instance has no value.</exception>
+        </member>
+        <member name="T:AggregateSource.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:AggregateSource.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:AggregateSource.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:AggregateSource.Properties.Resources.AggregateNotFoundException_DefaultMessage">
+            <summary>
+              Looks up a localized string similar to The {0} aggregate with identifier {1} could not be found. Please make sure the call site is indeed passing in an identifier for an {0} aggregate..
+            </summary>
+        </member>
+        <member name="P:AggregateSource.Properties.Resources.ConcurrentUnitOfWork_AttachAlreadyAdded">
+            <summary>
+              Looks up a localized string similar to The aggregate of type &apos;{0}&apos; with identifier &apos;{1}&apos; was already added. This could indicate there&apos;s a race condition, i.e. the same aggregate getting attached multiple times..
+            </summary>
+        </member>
+        <member name="P:AggregateSource.Properties.Resources.Optional_NoValue">
+            <summary>
+              Looks up a localized string similar to Optional object must have a value..
+            </summary>
+        </member>
+        <member name="P:AggregateSource.Properties.Resources.UnitOfWork_AttachAlreadyAdded">
+            <summary>
+              Looks up a localized string similar to The aggregate of type &apos;{0}&apos; with identifier &apos;{1}&apos; was already added. This could indicate there&apos;s a race condition, i.e. the same aggregate gets attached multiple times..
+            </summary>
+        </member>
+        <member name="T:AggregateSource.StaticEventRouter">
+            <summary>
+            Routes an event to a configured state handler.
+            </summary>
+        </member>
+        <member name="M:AggregateSource.StaticEventRouter.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:AggregateSource.StaticEventRouter"/> class.
+            </summary>
+        </member>
+        <member name="M:AggregateSource.StaticEventRouter.ConfigureRoute``2(System.Action{``0,``1})">
+            <summary>
+            Adds a route for the specified event type to the specified state handler.
+            </summary>
+            <typeparam name="TInstance">The instance type this route is for.</typeparam>
+            <typeparam name="TEvent">The event type this route is for.</typeparam>
+            <param name="handler">The state handler that should be invoked when an event of the specified type is routed to an instance of the specified type.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="handler"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:AggregateSource.StaticEventRouter.ConfigureRoute(System.Type,System.Type,System.Action{System.Object,System.Object})">
+            <summary>
+            Adds a route for the specified event type to the specified state handler.
+            </summary>
+            <param name="instance">The instance type the route is for.</param>
+            <param name="event">The event type the route is for.</param>
+            <param name="handler">The state handler that should be invoked when an event of the specified type is routed.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="instance"/> or <paramref name="event"/> or <paramref name="handler"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:AggregateSource.StaticEventRouter.Route(System.Object,System.Object)">
+            <summary>
+            Routes the specified <paramref name="event"/> to a configured state handler, if any, on the specified <paramref name="instance"/>.
+            </summary>
+            <param name="instance">The instance to route to.</param>
+            <param name="event">The event to route.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the <paramref name="instance"/> or <paramref name="event"/> is <c>null</c>.</exception>
+        </member>
+        <member name="T:AggregateSource.UnitOfWork">
+            <summary>
+            Tracks changes of attached aggregates.
+            </summary>
+        </member>
+        <member name="M:AggregateSource.UnitOfWork.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:AggregateSource.UnitOfWork"/> class.
+            </summary>
+        </member>
+        <member name="M:AggregateSource.UnitOfWork.Attach(AggregateSource.Aggregate)">
+            <summary>
+            Attaches the specified aggregate.
+            </summary>
+            <param name="aggregate">The aggregate.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the <paramref name="aggregate"/> is null.</exception>
+        </member>
+        <member name="M:AggregateSource.UnitOfWork.TryGet(System.String,AggregateSource.Aggregate@)">
+            <summary>
+            Attempts to get the <see cref="T:AggregateSource.Aggregate"/> using the specified aggregate identifier.
+            </summary>
+            <param name="identifier">The aggregate identifier.</param>
+            <param name="aggregate">The aggregate if found, otherwise <c>null</c>.</param>
+            <returns><c>true</c> if the aggregate was found, otherwise <c>false</c>.</returns>
+        </member>
+        <member name="M:AggregateSource.UnitOfWork.HasChanges">
+            <summary>
+            Determines whether this instance has aggregates with state changes.
+            </summary>
+            <returns>
+              <c>true</c> if this instance has aggregates with state changes; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:AggregateSource.UnitOfWork.GetChanges">
+            <summary>
+            Gets the aggregates with state changes.
+            </summary>
+            <returns>An enumeration of <see cref="T:AggregateSource.Aggregate"/>.</returns>
+        </member>
+    </members>
+</doc>
