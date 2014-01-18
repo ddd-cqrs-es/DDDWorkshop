@@ -6,6 +6,47 @@ using System.Threading.Tasks;
 
 namespace DDDWorkshop.Model.Issues
 {
+    public class ProductDefectiveness
+    {
+        public ProductId productId;
+        public int Rank;
+
+        public ProductDefectiveness(ProductId productId, int defectCount)
+        {
+            // TODO: Complete member initialization
+            this.productId = productId;
+            this.Rank = defectCount;
+        }
+    }
+
+    public class ProductDefectivenessRanker
+    {
+        private readonly  List<Issue> repo = new List<Issue>();
+
+        public ProductDefectivenessRanker(List<Issue> repo)
+        {
+            this.repo = repo;
+        }
+
+        public ProductDefectiveness MostDefectiveProductFrom(TenantId tenantId)
+        {
+            return AllDefectiveProductsFrom(tenantId).Last();
+        }
+
+        public List<ProductDefectiveness> AllDefectiveProductsFrom(TenantId tenantId)
+        {
+            var productIssues = repo.GroupBy(x => x.ProductId.id);
+            
+            int rank = 0;
+            return productIssues
+                .Select(x => new { ProductId = x.Key, NumberOfDefects = x.Count() })
+                .OrderBy(x => x.NumberOfDefects)
+                .Select(x => new ProductDefectiveness(new ProductId(x.ProductId), ++rank)).ToList();                         
+        }
+    }
+
+    //sorted list most to least defective products
+    //getMostDefectiveSinglePRoduct
     public class Product : AggregateRootEntity
     {
         public static readonly Func<Product> Factory = () => new Product();
@@ -195,7 +236,7 @@ namespace DDDWorkshop.Model.Issues
         public static readonly Func<Issue> Factory = () => new Issue();
 
         private IssueId _id;
-        private ProductId _productId;
+        public ProductId ProductId;
         private State _state;
         private string _description;
         private string _summary;
@@ -220,7 +261,7 @@ namespace DDDWorkshop.Model.Issues
         private void When(IssueCreated e)
         {
             _id = new IssueId(e.issueId);
-            _productId = new ProductId(e.productId);
+            ProductId = new ProductId(e.productId);
             _state = State.Pending;
             _type = (IssueType)Enum.Parse(typeof(IssueType), e.issueType);
             _description = e.description;
@@ -303,7 +344,7 @@ namespace DDDWorkshop.Model.Issues
 
         public class ProductId
         {
-            private readonly string id;
+            public readonly string id;
 
             public ProductId(string id)
             {
@@ -313,6 +354,13 @@ namespace DDDWorkshop.Model.Issues
             public ProductId()
             {
                 this.id = Guid.NewGuid().ToString();
+            }
+
+            public override bool Equals(object obj)
+            {
+                var other = obj as ProductId;
+                if (other == null) return false;
+                return other.id == this.id;
             }
 
             public override string ToString()

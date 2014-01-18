@@ -32,61 +32,74 @@ namespace DDDWorkshop
             connection.Connect();
 
 
-            while (true)
-            {
-                var productUow = new UnitOfWork();
-                var productRepository = new Repository<Product>(
-                    Product.Factory,
-                    productUow,
-                    connection,
-                    new EventReaderConfiguration(
-                        new SliceSize(512),
-                        new JsonDeserializer(),
-                        new PassThroughStreamNameResolver(),
-                        new FixedStreamUserCredentialsResolver(credentials)));
 
-                var tenantId = new TenantId(Guid.NewGuid().ToString());
-                var productId = new ProductId();
-                productRepository.Add(productId.ToString(),
-                    new Product(tenantId,
-                        productId,
-                        "dolphin-tuna",
-                        "non-dolphin free",
-                        new ProductManager(Guid.NewGuid().ToString()),
-                        new IssueAssigner(Guid.NewGuid().ToString())));
+            var productUow = new UnitOfWork();
+            var productRepository = new Repository<Product>(
+                Product.Factory,
+                productUow,
+                connection,
+                new EventReaderConfiguration(
+                    new SliceSize(512),
+                    new JsonDeserializer(),
+                    new PassThroughStreamNameResolver(),
+                    new FixedStreamUserCredentialsResolver(credentials)));
 
-                AppendToStream(credentials, connection, productUow);
+            var tenantId = new TenantId(Guid.NewGuid().ToString());
+            var productId = new ProductId();
+            productRepository.Add(productId.ToString(),
+                new Product(tenantId,
+                    productId,
+                    "dolphin-tuna",
+                    "non-dolphin free",
+                    new ProductManager(Guid.NewGuid().ToString()),
+                    new IssueAssigner(Guid.NewGuid().ToString())));
 
-                var product = productRepository.Get(productId.ToString());
+            var product = productRepository.Get(productId.ToString());
 
-                List<Issue> issues = new List<Issue>();
-                var issueId = new IssueId();
-                issues.Add(product.ReportDefect(issueId, "shit be bad yo", "fo real"));
-                issues.Add(product.ReportDefect(new IssueId(), "shit be bad yo", "fo real"));
-                issues.Add(product.ReportDefect(new IssueId(), "shit be bad yo", "fo real"));
-                issues.Add(product.ReportDefect(new IssueId(), "shit be bad yo", "fo real"));
-                issues.Add(product.ReportDefect(new IssueId(), "shit be bad yo", "fo real"));
+            List<Issue> issues = new List<Issue>();
+            var issueId = new IssueId();
+            issues.Add(product.ReportDefect(issueId, "shit be bad yo", "fo real"));
+            issues.Add(product.ReportDefect(new IssueId(), "shit be bad yo", "fo real"));
+            issues.Add(product.ReportDefect(new IssueId(), "shit be bad yo", "fo real"));
+            issues.Add(product.ReportDefect(new IssueId(), "shit be bad yo", "fo real"));
+            issues.Add(product.ReportDefect(new IssueId(), "shit be bad yo", "fo real"));
 
-                DefectStatistics stats1 = new DefectStatistics(issues);
+            DefectStatistics stats1 = new DefectStatistics(issues);
 
-                var release1 = product.ScheduleRelease("new relased", stats1);
+            var release1 = product.ScheduleRelease("new relased", stats1);
 
-                var density = release1.CalculateDefectDensity(new KlocMEasurement(10));
 
-                issues.Add(product.ReportDefect(new IssueId(), "shit be bad yo", "fo real"));
-                issues.Add(product.ReportDefect(new IssueId(), "shit be bad yo", "fo real"));
 
-                issues.First().Resolve("cool");
+            var density = release1.CalculateDefectDensity(new KlocMEasurement(10));
 
-                DefectStatistics stats2 = new DefectStatistics(issues);
+            issues.Add(product.ReportDefect(new IssueId(), "shit be bad yo", "fo real"));
+            issues.Add(product.ReportDefect(new IssueId(), "shit be bad yo", "fo real"));
 
-                var release2 = product.ScheduleRelease("new relased", stats2);
+            issues.First().Resolve("cool");
 
-                var density2 = release2.CalculateDefectDensity(new KlocMEasurement(10));
+            DefectStatistics stats2 = new DefectStatistics(issues);
 
-                
-  
-            }
+            var release2 = product.ScheduleRelease("new relased", stats2);
+
+            var density2 = release2.CalculateDefectDensity(new KlocMEasurement(10));
+
+            var product2 = productRepository.Get(productId.ToString());
+
+            var issueIdForProduct2 = new IssueId();
+            issues.Add(product2.ReportDefect(issueIdForProduct2, "shit be bad yo", "fo real"));
+            issues.Add(product2.ReportDefect(new IssueId(), "shit be bad yo", "fo real"));
+            issues.Add(product2.ReportDefect(new IssueId(), "shit be bad yo", "fo real"));
+            issues.Add(product2.ReportDefect(new IssueId(), "shit be bad yo", "fo real"));
+            issues.Add(product2.ReportDefect(new IssueId(), "shit be bad yo", "fo real"));
+
+            ProductDefectivenessRanker ranker = new ProductDefectivenessRanker(issues);
+
+            ProductDefectiveness mostDefective = ranker.MostDefectiveProductFrom(tenantId);
+
+
+
+
+
         }
 
         private static void AppendToStream(UserCredentials credentials, IEventStoreConnection connection, UnitOfWork unitOfWork)
@@ -103,7 +116,7 @@ namespace DDDWorkshop
                             true,
                             ToJsonByteArray(_),
                             new byte[0])),
-                credentials);            
+                credentials);
         }
 
         class JsonDeserializer : IEventDeserializer
