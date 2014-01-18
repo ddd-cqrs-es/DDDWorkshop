@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DDDWorkshop.Model.Issues
 {
-    public class Product : AggregateRootEntity    
+    public class Product : AggregateRootEntity
     {
         public static readonly Func<Product> Factory = () => new Product();
 
@@ -19,40 +19,113 @@ namespace DDDWorkshop.Model.Issues
         private ProductManager productManager;
         private IssueAssigner issueAssigner;
 
+        private Release release;
+
         Product()
         {
             Register<ProductCreated>(e =>
             {
-                _id = new ProductId (e.ProductId);
+                _id = new ProductId(e.ProductId);
                 _tenantId = new TenantId(e.TenantId);
                 name = e.Name;
                 description = e.Description;
-                productManager = new ProductManager ( e.ProductManager);
+                productManager = new ProductManager(e.ProductManager);
                 issueAssigner = new IssueAssigner(e.IssueAssigner);
             });
         }
 
         public Product(
-            TenantId tenantId, 
-            ProductId id, 
-            string name, 
-            string description, 
-            ProductManager manager, 
-            IssueAssigner assigner) : this()
+            TenantId tenantId,
+            ProductId id,
+            string name,
+            string description,
+            ProductManager manager,
+            IssueAssigner assigner)
+            : this()
         {
             ApplyChange(new ProductCreated(tenantId, id, name, description, manager, assigner));
         }
 
-        public Issue ReportDefect(IssueId issueId,  string descrption, string summary)
+        //determine stats
+        //kloc / number of defects
+
+        public DefectDensity Determine(KlocMEasurement measurement)
         {
-            return new Issue(_tenantId, issueId, _id, description, summary, IssueType.Defect);
+            var currentRelease = CurrentRelease();
+            currentRelease.CalculateDefectDensity(measurement);
+            return currentRelease.Densities.Last();
         }
 
-        public Issue RequestFeature(IssueId issueId, string descrption, string summary)
+        private List<Release> releases = new List<Release>();
+
+        public Release CurrentRelease()
         {
-            return new Issue(_tenantId, issueId, _id, description, summary, IssueType.Feature);
+            return releases.LastOrDefault();
+        }
+
+        public void ScheduleRelease(string name)
+        {
+            Release newRelease;
+            var currentRelease = CurrentRelease();
+            if (currentRelease == null)
+                newRelease = new Release(new DefectStatistics(AllIssues));
+            else
+                newRelease = new Release(currentRelease.DefectStatistics);
+            releases.Add(newRelease);
+        }
+
+        public List<Issue> AllIssues = new List<Issue>();
+
+        public void ReportDefect(IssueId issueId, string descrption, string summary)
+        {
+            var currentRelease = CurrentRelease();
+            if (currentRelease != null)
+                currentRelease.DefectStatistics = currentRelease.DefectStatistics.IssueReported();
+
+            AllIssues.Add(new Issue(_tenantId, issueId, _id, description, summary, IssueType.Defect));
+        }
+
+        public void ResolveIssue(IssueId issueId, string resolution)
+        {
+            var currentRelease = CurrentRelease();
+            if (currentRelease != null)
+                currentRelease.DefectStatistics = currentRelease.DefectStatistics.IssueFixed();
+
+            var issue = AllIssues.First(x => x.Id.Equals(issueId));
+            issue.Resolve(resolution);
+        }
+
+        public void RequestFeature(IssueId issueId, string descrption, string summary)
+        {
+            AllIssues.Add(new Issue(_tenantId, issueId, _id, description, summary, IssueType.Feature));
         }
     }
+
+
+    public class Release
+    {
+        public Release(DefectStatistics defectStatistics)
+        {
+            this.DefectStatistics = defectStatistics;
+        }
+
+        public ReleaseId Id { get; set; }
+
+        public List<DefectDensity> Densities = new List<DefectDensity>();
+
+        public DefectStatistics DefectStatistics { get; set; }
+
+        public void CalculateDefectDensity(KlocMEasurement measurement)
+        {
+            var density = DefectStatistics.CalculateDefectDensity(measurement);
+            Densities.Add(density);
+        }
+    }
+
+    public class ReleaseId
+    {
+    }
+
 
     public class ProductManager
     {
@@ -91,6 +164,67 @@ namespace DDDWorkshop.Model.Issues
         Defect, Feature
     }
 
+    public class DefectDensity : Measurement
+    {
+        private float p;
+
+        public DefectDensity(float p)
+        {
+            this.p = p;
+        }
+    }
+
+    public class Measurement
+    {
+
+    }
+
+    public class KlocMEasurement : Measurement
+    {
+        public KlocMEasurement(float p)
+        {
+            this.Value = p;
+        }
+
+        public float Value { get; set; }
+    }
+
+    public class DefectStatistics
+    {
+        public int NumberReported;
+        public int NumberFixed;
+        public int NumberKnown;
+        
+
+        public DefectStatistics(int numberReported, int numberFixed, int numberKnown)
+        {
+            NumberReported = numberReported;
+            NumberFixed = numberFixed;
+            NumberKnown = numberKnown;
+        }
+
+        public DefectStatistics(List<Issue> AllIssues)
+            : this(AllIssues.Count(), AllIssues.Count(x => x.IsFixed), AllIssues.Count(x => !x.IsFixed))
+        {
+           
+        }
+
+        public DefectStatistics IssueReported()
+        {
+            return new DefectStatistics(NumberReported, NumberFixed + 1, NumberKnown + 1);
+        }
+
+        public DefectStatistics IssueFixed()
+        {
+            return new DefectStatistics(NumberReported, NumberFixed + 1, NumberKnown - 1);
+        }
+
+        public DefectDensity CalculateDefectDensity(KlocMEasurement klock)
+        {
+            return new DefectDensity(NumberKnown / klock.Value);
+        }
+    }
+
     public class Issue : AggregateRootEntity
     {
         public static readonly Func<Issue> Factory = () => new Issue();
@@ -103,7 +237,7 @@ namespace DDDWorkshop.Model.Issues
 
         private enum State
         {
-            Pending, Confirmed
+            Pending, Confirmed, Fixed
         }
 
         Issue()
@@ -135,106 +269,131 @@ namespace DDDWorkshop.Model.Issues
             ApplyChange(new IssueConfirmed(_id));
         }
 
+        public void Fixed(string resolution)
+        {
+            ApplyChange(new IssueFixed(_id, resolution));
+        }
+
         private void When(IssueConfirmed e)
         {
             _state = State.Confirmed;
-        }       
+        }
 
         public IssueType _type { get; set; }
-    }
 
-    public class IssueId
-    {
-        private readonly string id;
+        public IssueId Id { get { return _id; } }
 
-        public IssueId(string id)
+        internal void Resolve(string resolution)
         {
-            this.id = id;
+            _state = State.Fixed;
         }
 
-        public IssueId()
+        public bool IsFixed
         {
-            this.id = Guid.NewGuid().ToString();
-        }
-
-        public override string ToString()
-        {
-            return id.ToString();
+            get { return _state == State.Fixed; }
         }
     }
 
-    public class TenantId
-    {
-        private readonly string id;
-
-        public TenantId(string id)
+        public class IssueId
         {
-            this.id = id;
+            private readonly string id;
+
+            public IssueId(string id)
+            {
+                this.id = id;
+            }
+
+            public override bool Equals(object obj)
+            {
+                var other = obj as IssueId;
+                if (other == null) return false;
+                return other.id == this.id;
+            }
+
+            public IssueId()
+            {
+                this.id = Guid.NewGuid().ToString();
+            }
+
+            public override string ToString()
+            {
+                return id.ToString();
+            }
         }
 
-        public override string ToString()
+        public class TenantId
         {
-            return id.ToString();
-        }
-    }
+            private readonly string id;
 
-    public class ProductId
-    {
-        private readonly string id;
+            public TenantId(string id)
+            {
+                this.id = id;
+            }
 
-        public ProductId(string id)
-        {
-            this.id = id;
-        }
-
-        public ProductId()
-        {
-            this.id = Guid.NewGuid().ToString();
+            public override string ToString()
+            {
+                return id.ToString();
+            }
         }
 
-        public override string ToString()
+        public class ProductId
         {
-            return id.ToString();
+            private readonly string id;
+
+            public ProductId(string id)
+            {
+                this.id = id;
+            }
+
+            public ProductId()
+            {
+                this.id = Guid.NewGuid().ToString();
+            }
+
+            public override string ToString()
+            {
+                return id.ToString();
+            }
         }
-    }
 
-    public class IssueCreated
-    {
-        public string tenantId;
-        public string issueId;
-        public string productId;
-        public string description;
-        public string summary;
-        public string issueType;
-
-        public IssueCreated(
-            TenantId tenantId1, 
-            IssueId issueId1, 
-            ProductId productId1, 
-            string description1, 
-            string summary1, 
-            IssueType issueType)
+        public class IssueCreated
         {
-            // TODO: Complete member initialization
-            this.tenantId = tenantId1.ToString();
-            this.issueId = issueId1.ToString();
-            this.productId = productId1.ToString();
-            this.description = description1.ToString();
-            this.summary = summary1.ToString();
-            this.issueType = issueType.ToString();
+            public string tenantId;
+            public string issueId;
+            public string productId;
+            public string description;
+            public string summary;
+            public string issueType;
+
+            public IssueCreated(
+                TenantId tenantId1,
+                IssueId issueId1,
+                ProductId productId1,
+                string description1,
+                string summary1,
+                IssueType issueType)
+            {
+                // TODO: Complete member initialization
+                this.tenantId = tenantId1.ToString();
+                this.issueId = issueId1.ToString();
+                this.productId = productId1.ToString();
+                this.description = description1.ToString();
+                this.summary = summary1.ToString();
+                this.issueType = issueType.ToString();
+            }
         }
-    }
 
-    public class IssueConfirmed
-    {
-        public string IssueId;
+        public class IssueConfirmed
+        {
+            public string IssueId;
 
-        public IssueConfirmed(IssueId issueId)
-        {         
-            this.IssueId = issueId.ToString();
+            public IssueConfirmed(IssueId issueId)
+            {
+                this.IssueId = issueId.ToString();
+            }
         }
     }
 
    
 
-}
+

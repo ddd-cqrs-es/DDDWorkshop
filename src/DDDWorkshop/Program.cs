@@ -7,6 +7,7 @@ using EventStore.ClientAPI.SystemData;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -58,39 +59,28 @@ namespace DDDWorkshop
 
                 var product = productRepository.Get(productId.ToString());
 
-                while (true)
-                {
-                    var issueUow = new UnitOfWork();
-                    var issueRepository = new Repository<Issue>(
-                        Issue.Factory,
-                        issueUow,
-                        connection,
-                        new EventReaderConfiguration(
-                            new SliceSize(512),
-                            new JsonDeserializer(),
-                            new PassThroughStreamNameResolver(),
-                            new FixedStreamUserCredentialsResolver(credentials)));
+                var issueId = new IssueId();
+                product.ReportDefect(issueId, "shit be bad yo", "fo real");
+                product.ReportDefect(new IssueId(), "shit be bad yo", "fo real");
+                product.ReportDefect(new IssueId(), "shit be bad yo", "fo real");
+                product.ReportDefect(new IssueId(), "shit be bad yo", "fo real");
+                product.ReportDefect(new IssueId(), "shit be bad yo", "fo real");
 
-                    var issueId = new IssueId();
-                    issueRepository.Add(issueId.ToString(), product.ReportDefect(issueId, "This is shit", "really"));
 
-                    var issue = issueRepository.Get(issueId.ToString());
+                product.ResolveIssue(issueId, "fixed it yo");
 
-                    issue.Confirm();
+                product.ScheduleRelease("new relased");
 
-                    try
-                    {
-                        //cant do twice;
-                        issue.Confirm();
-                    }
-                    catch (Exception)
-                    {
+                var stats = product.Determine(new KlocMEasurement(10));
 
-                    }
+                product.ReportDefect(new IssueId(), "shit be bad yo", "fo real");
+                product.ReportDefect(new IssueId(), "shit be bad yo", "fo real");
+                product.ScheduleRelease("new relased");
 
-                    //Append to stream
-                    AppendToStream(credentials, connection, issueUow);
-                }
+                var stats2 = product.Determine(new KlocMEasurement(10));
+
+                
+  
             }
         }
 

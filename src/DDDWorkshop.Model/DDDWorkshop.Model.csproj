@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="AggregateSource.cs" />
     <Compile Include="Issues\Issue.cs" />
+    <Compile Include="Issues\IssueFixed.cs" />
     <Compile Include="Issues\ProductCreated.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

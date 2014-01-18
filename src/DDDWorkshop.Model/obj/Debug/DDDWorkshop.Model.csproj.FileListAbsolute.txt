@@ -5,3 +5,10 @@ C:\Dev\DDDWorkshop\DDDWorkshop\DDDWorkshop.Model\bin\Debug\AggregateSource.dll
 C:\Dev\DDDWorkshop\DDDWorkshop\DDDWorkshop.Model\bin\Debug\AggregateSource.xml
 C:\Dev\DDDWorkshop\DDDWorkshop\DDDWorkshop.Model\obj\Debug\DDDWorkshop.Model.dll
 C:\Dev\DDDWorkshop\DDDWorkshop\DDDWorkshop.Model\obj\Debug\DDDWorkshop.Model.pdb
+C:\Dev\DDDWorkshop\src\DDDWorkshop.Model\obj\Debug\DDDWorkshop.Model.csprojResolveAssemblyReference.cache
+C:\Dev\DDDWorkshop\src\DDDWorkshop.Model\obj\Debug\DDDWorkshop.Model.dll
+C:\Dev\DDDWorkshop\src\DDDWorkshop.Model\bin\Debug\DDDWorkshop.Model.dll
+C:\Dev\DDDWorkshop\src\DDDWorkshop.Model\bin\Debug\DDDWorkshop.Model.pdb
+C:\Dev\DDDWorkshop\src\DDDWorkshop.Model\bin\Debug\AggregateSource.dll
+C:\Dev\DDDWorkshop\src\DDDWorkshop.Model\bin\Debug\AggregateSource.xml
+C:\Dev\DDDWorkshop\src\DDDWorkshop.Model\obj\Debug\DDDWorkshop.Model.pdb
