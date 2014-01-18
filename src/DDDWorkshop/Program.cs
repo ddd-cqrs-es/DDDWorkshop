@@ -59,25 +59,30 @@ namespace DDDWorkshop
 
                 var product = productRepository.Get(productId.ToString());
 
+                List<Issue> issues = new List<Issue>();
                 var issueId = new IssueId();
-                product.ReportDefect(issueId, "shit be bad yo", "fo real");
-                product.ReportDefect(new IssueId(), "shit be bad yo", "fo real");
-                product.ReportDefect(new IssueId(), "shit be bad yo", "fo real");
-                product.ReportDefect(new IssueId(), "shit be bad yo", "fo real");
-                product.ReportDefect(new IssueId(), "shit be bad yo", "fo real");
+                issues.Add(product.ReportDefect(issueId, "shit be bad yo", "fo real"));
+                issues.Add(product.ReportDefect(new IssueId(), "shit be bad yo", "fo real"));
+                issues.Add(product.ReportDefect(new IssueId(), "shit be bad yo", "fo real"));
+                issues.Add(product.ReportDefect(new IssueId(), "shit be bad yo", "fo real"));
+                issues.Add(product.ReportDefect(new IssueId(), "shit be bad yo", "fo real"));
 
+                DefectStatistics stats1 = new DefectStatistics(issues);
 
-                product.ResolveIssue(issueId, "fixed it yo");
+                var release1 = product.ScheduleRelease("new relased", stats1);
 
-                product.ScheduleRelease("new relased");
+                var density = release1.CalculateDefectDensity(new KlocMEasurement(10));
 
-                var stats = product.Determine(new KlocMEasurement(10));
+                issues.Add(product.ReportDefect(new IssueId(), "shit be bad yo", "fo real"));
+                issues.Add(product.ReportDefect(new IssueId(), "shit be bad yo", "fo real"));
 
-                product.ReportDefect(new IssueId(), "shit be bad yo", "fo real");
-                product.ReportDefect(new IssueId(), "shit be bad yo", "fo real");
-                product.ScheduleRelease("new relased");
+                issues.First().Resolve("cool");
 
-                var stats2 = product.Determine(new KlocMEasurement(10));
+                DefectStatistics stats2 = new DefectStatistics(issues);
+
+                var release2 = product.ScheduleRelease("new relased", stats2);
+
+                var density2 = release2.CalculateDefectDensity(new KlocMEasurement(10));
 
                 
   

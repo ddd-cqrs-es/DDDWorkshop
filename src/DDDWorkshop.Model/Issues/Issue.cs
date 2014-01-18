@@ -47,57 +47,21 @@ namespace DDDWorkshop.Model.Issues
         }
 
         //determine stats
-        //kloc / number of defects
+        //kloc / number of defects 
 
-        public DefectDensity Determine(KlocMEasurement measurement)
+        public Release ScheduleRelease(string name, DefectStatistics stats)
         {
-            var currentRelease = CurrentRelease();
-            currentRelease.CalculateDefectDensity(measurement);
-            return currentRelease.Densities.Last();
+            return new Release(stats);
+        }        
+
+        public Issue ReportDefect(IssueId issueId, string descrption, string summary)
+        {
+            return new Issue(_tenantId, issueId, _id, description, summary, IssueType.Defect);
         }
 
-        private List<Release> releases = new List<Release>();
-
-        public Release CurrentRelease()
+        public Issue RequestFeature(IssueId issueId, string descrption, string summary)
         {
-            return releases.LastOrDefault();
-        }
-
-        public void ScheduleRelease(string name)
-        {
-            Release newRelease;
-            var currentRelease = CurrentRelease();
-            if (currentRelease == null)
-                newRelease = new Release(new DefectStatistics(AllIssues));
-            else
-                newRelease = new Release(currentRelease.DefectStatistics);
-            releases.Add(newRelease);
-        }
-
-        public List<Issue> AllIssues = new List<Issue>();
-
-        public void ReportDefect(IssueId issueId, string descrption, string summary)
-        {
-            var currentRelease = CurrentRelease();
-            if (currentRelease != null)
-                currentRelease.DefectStatistics = currentRelease.DefectStatistics.IssueReported();
-
-            AllIssues.Add(new Issue(_tenantId, issueId, _id, description, summary, IssueType.Defect));
-        }
-
-        public void ResolveIssue(IssueId issueId, string resolution)
-        {
-            var currentRelease = CurrentRelease();
-            if (currentRelease != null)
-                currentRelease.DefectStatistics = currentRelease.DefectStatistics.IssueFixed();
-
-            var issue = AllIssues.First(x => x.Id.Equals(issueId));
-            issue.Resolve(resolution);
-        }
-
-        public void RequestFeature(IssueId issueId, string descrption, string summary)
-        {
-            AllIssues.Add(new Issue(_tenantId, issueId, _id, description, summary, IssueType.Feature));
+            return new Issue(_tenantId, issueId, _id, description, summary, IssueType.Feature);
         }
     }
 
@@ -115,10 +79,11 @@ namespace DDDWorkshop.Model.Issues
 
         public DefectStatistics DefectStatistics { get; set; }
 
-        public void CalculateDefectDensity(KlocMEasurement measurement)
+        public DefectDensity CalculateDefectDensity(KlocMEasurement measurement)
         {
             var density = DefectStatistics.CalculateDefectDensity(measurement);
             Densities.Add(density);
+            return density;
         }
     }
 
@@ -283,7 +248,7 @@ namespace DDDWorkshop.Model.Issues
 
         public IssueId Id { get { return _id; } }
 
-        internal void Resolve(string resolution)
+        public void Resolve(string resolution)
         {
             _state = State.Fixed;
         }
